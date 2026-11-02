@@ -125,3 +125,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   .case-actions{justify-content:space-between}
   .case-actions .btn-ghost{flex:1;text-align:center}
 }
+
+/* fix(t_60e21e48): modal-backdrop display:flex overrides hidden attr, blocking timeline clicks */
+[hidden]{display:none !important}
