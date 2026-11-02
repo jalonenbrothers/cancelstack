@@ -75,5 +75,24 @@ $a2 = Validator::attempt(['date' => '2026-01-01', 'channel' => 'email',
     'outcome' => 'success', 'confirmation' => 'CN-99', 'screenshot_url' => 'https://imgur.com/x']);
 check($a2['confirmation'] === 'CN-99' && $a2['screenshot_url'] === 'https://imgur.com/x', 'attempt: full fields pass');
 
+// --- Validator: hostile array/object input (BUG t_b0bb43a1) — must throw, never cast ---
+try { Validator::case(['merchant' => ['array']]); check(false, 'case: array merchant rejected'); $fail++; }
+catch (InvalidArgumentException $e) { check(true, 'case: array merchant rejected'); }
+try { Validator::case(['merchant' => 'M', 'amount' => ['x']]); check(false, 'case: array amount rejected'); $fail++; }
+catch (InvalidArgumentException $e) { check(true, 'case: array amount rejected'); }
+try { Validator::case(['merchant' => 'M', 'cycle' => ['x']]); check(false, 'case: array cycle rejected'); $fail++; }
+catch (InvalidArgumentException $e) { check(true, 'case: array cycle rejected'); }
+try { Validator::case(['merchant' => 'M', 'plan' => ['x']]); check(false, 'case: array plan rejected'); $fail++; }
+catch (InvalidArgumentException $e) { check(true, 'case: array plan rejected'); }
+try { Validator::attempt(['date' => date('Y-m-d'), 'channel' => 'phone', 'outcome' => ['x']]); check(false, 'attempt: array outcome rejected'); $fail++; }
+catch (InvalidArgumentException $e) { check(true, 'attempt: array outcome rejected'); }
+try { Validator::attempt(['date' => date('Y-m-d'), 'channel' => 'phone', 'outcome' => 'other', 'note' => ['x']]); check(false, 'attempt: array note rejected'); $fail++; }
+catch (InvalidArgumentException $e) { check(true, 'attempt: array note rejected'); }
+try { Validator::attempt(['date' => ['y'], 'channel' => 'phone', 'outcome' => 'other']); check(false, 'attempt: array date rejected'); $fail++; }
+catch (InvalidArgumentException $e) { check(true, 'attempt: array date rejected'); }
+// null fields are absent-friendly (coalesce), not hostile
+$nullable = Validator::case(['merchant' => 'M', 'plan' => null]);
+check($nullable['plan'] === null, 'case: null plan treated as absent');
+
 echo "\n" . ($fail ? "$fail FAILED, " : '') . "$pass passed\n";
 exit($fail ? 1 : 0);
