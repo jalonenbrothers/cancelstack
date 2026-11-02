@@ -47,6 +47,10 @@ php tests/run.php    # unit tests: Token, Status derivation, Validator
 
 ## Deploy (Hostinger subdomain)
 
+Full operator run/deploy instructions — local Docker stack with tested
+commands, Hostinger migration steps and a post-deploy verification
+checklist — in **[docs/DEPLOY.md](docs/DEPLOY.md)**.
+
 1. Clone/upload repo to the subdomain's web root
 2. cp lib/config.example.php lib/config.php — fill db creds from hPanel
 3. Run migrations/ per migrations/README.md
